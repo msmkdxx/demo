@@ -3,17 +3,14 @@ package com.example.demo.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo.conf.CurrentUser;
 import com.example.demo.conf.LoginReqired;
-import com.example.demo.dto.Goods;
 import com.example.demo.dto.LoginUser;
 import com.example.demo.dto.User;
-import com.example.demo.utils.IpUtils;
 import com.example.demo.utils.RedisUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,25 +44,6 @@ public class UserController {
             //将loginUser对象转为string类型，作为token的value存入缓存
             redisUtils.set(token, JSONObject.toJSONString(loginUser));
             return token;
-    }
-
-    @GetMapping(value = "/addGoods")
-    @ApiOperation("添加商品")
-    @LoginReqired
-    public void addGoods(@Validated Goods goods, HttpServletRequest request){
-        redisUtils.set(IpUtils.getIpAddr(request),JSONObject.toJSONString(goods));
-    }
-
-    @GetMapping(value = "/getGoods")
-    @ApiOperation("查询商品")
-    @LoginReqired
-    public Goods getGoods(HttpServletRequest request){
-        Object obj = redisUtils.get(IpUtils.getIpAddr(request));
-        if(!ObjectUtils.isEmpty(obj)){
-            Goods goods = JSONObject.parseObject(obj.toString(),Goods.class);
-            return goods;
-        }
-        return null;
     }
 
     @GetMapping(value = "/getUser")
